@@ -32,6 +32,17 @@ Entrada de Estoque
                                     </option>
                                 {% endfor %}
                             </select>
+                            <label for="deposito" class="form-label fw-semibold mt-3">
+                                Depósito
+                            </label>
+                            <select id="deposito" name="deposito" class="form-select mt-2" required>
+                                <option value="">Selecione um depósito</option>
+                                {% for deposito in depositos %}
+                                    <option value="{{ deposito.id }}">
+                                        {{ deposito.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <div class="mb-3">
@@ -62,7 +73,7 @@ Entrada de Estoque
                                 <tr>
                                     <th>Produto</th>
                                     <th>Quantidade</th>
-                                    <th>Observação</th>
+                                    <th>Depósito</th>
                                     <th>Data</th>
                                 </tr>
                             </thead>
@@ -71,7 +82,7 @@ Entrada de Estoque
                                 <tr>
                                     <td>{{ entrada.produto.nome }}</td>
                                     <td>{{ entrada.quantidade }}</td>
-                                    <td>{{ entrada.observacao }}</td>
+                                    <td>{{ entrada.deposito.nome }}</td>
                                     <td>{{ entrada.data|date:"d/m/Y H:i" }}</td>
                                 </tr>
                                 {% empty %}

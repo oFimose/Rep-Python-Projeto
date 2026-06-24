@@ -13,43 +13,25 @@ Dashboard
     Aqui você pode gerenciar o estoque, visualizar relatórios e muito mais.
 </p>
 
-<div class="row mt-4">
+<div class="row mb-4">
     <div class="col-md-4">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body text-center">
-                <h2 class="text-primary">
-                    {{ total_produtos }}
-                </h2>
-                <p class="mb-0">
-                    Produtos
-                </p>
-            </div>
+        <div class="card p-3 text-center shadow-sm border-0">
+            <h5 class="text-muted">Produtos Cadastrados</h5>
+            <h2 class="text-primary fw-bold">{{ total_produtos }}</h2>
         </div>
     </div>
-
+    
     <div class="col-md-4">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body text-center">
-                <h2 class="text-success">
-                    {{ total_categorias }}
-                </h2>
-                <p class="mb-0">
-                    Categorias
-                </p>
-            </div>
+        <div class="card p-3 text-center shadow-sm border-0">
+            <h5 class="text-muted">Total de Entradas</h5>
+            <h2 class="text-success fw-bold">{{ total_entradas }}</h2>
         </div>
     </div>
-
+    
     <div class="col-md-4">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body text-center">
-                <h2 class="text-warning">
-                    {{ total_entradas }}
-                </h2>
-                <p class="mb-0">
-                    Entradas
-                </p>
-            </div>
+        <div class="card p-3 text-center shadow-sm border-0">
+            <h5 class="text-muted">Total de Saídas</h5>
+            <h2 class="text-danger fw-bold">{{ total_saidas }}</h2>
         </div>
     </div>
 </div>
@@ -60,48 +42,92 @@ Dashboard
 
 <div class="row g-4">
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body">
-                <h5>Produtos</h5>
-                <p class="text-muted">
-                    Cadastro de produtos
-                </p>
+        <a href="{% url 'produtos' %}" class="text-decoration-none text-dark">
+            <div class="card shadow-sm border-0 h-100 bg-light bg-opacity-50 text-center text-md-start">
+                <div class="card-body">
+                    <h5 class="fw-bold text-primary">Produtos</h5>
+                    <p class="text-muted mb-0">
+                        Cadastro de produtos
+                    </p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body">
-                <h5>Entradas</h5>
-                <p class="text-muted">
-                    Registro de entradas
-                </p>
+        <a href="{% url 'entrada' %}" class="text-decoration-none text-dark">
+            <div class="card shadow-sm border-0 h-100 bg-light bg-opacity-50 text-center text-md-start">
+                <div class="card-body">
+                    <h5 class="fw-bold text-success">Entradas</h5>
+                    <p class="text-muted mb-0">
+                        Registro de entradas
+                    </p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body">
-                <h5>Saídas</h5>
-                <p class="text-muted">
-                    Controle de saídas
-                </p>
+        <a href="{% url 'saida' %}" class="text-decoration-none text-dark">
+            <div class="card shadow-sm border-0 h-100 bg-light bg-opacity-50 text-center text-md-start">
+                <div class="card-body">
+                    <h5 class="fw-bold text-danger">Saídas</h5>
+                    <p class="text-muted mb-0">
+                        Controle de saídas
+                    </p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 card-hover">
-            <div class="card-body">
-                <h5>Depósitos</h5>
-                <p class="text-muted">
-                    Gerenciar depósitos
-                </p>
+        <a href="{% url 'depositos' %}" class="text-decoration-none text-dark">
+            <div class="card shadow-sm border-0 h-100 bg-light bg-opacity-50 text-center text-md-start">
+                <div class="card-body">
+                    <h5 class="fw-bold text-dark">Depósitos</h5>
+                    <p class="text-muted mb-0">
+                        Gerenciar depósitos
+                    </p>
+                </div>
             </div>
+        </a>
+    </div>
+</div>
+<h2 class="mt-5 mb-4">Atividades Recentes</h2>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Produto</th>
+                        <th>Tipo</th>
+                        <th>Quantidade</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mov in ultimas_movs %}
+                    <tr>
+                        <td class="fw-bold">{{ mov.produto.nome }}</td>
+                        <td>
+                            {% if mov.tipo == 'E' %}
+                                <span class="badge bg-success-subtle text-success">Entrada</span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger">Saída</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ mov.quantidade }} unidades</td>
+                        <td class="text-muted small">{{ mov.data|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">Nenhuma movimentação registrada ainda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
 {% endblock %}
