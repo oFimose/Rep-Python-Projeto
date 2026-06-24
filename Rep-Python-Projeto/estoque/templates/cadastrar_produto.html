@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Cadastrar Produto
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Cadastrar Produto</h4>
+            </div>
+
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_nome">Nome</label>
+                        <input type="text" name="nome" id="id_nome" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_quantidade">Quantidade</label>
+                        <input type="number" name="quantidade" id="id_quantidade" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_descricao">Descrição</label>
+                        <textarea name="descricao" id="id_descricao" rows="4" class="form-control"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="id_categoria">Categoria</label>
+                        <div class="input-group">
+                            <select name="categoria" id="id_categoria" class="form-select" required>
+                                {% for categoria in categorias %}
+                                    <option value="{{ categoria.id }}">
+                                        {{ categoria.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <a href="{% url 'cadastrar_categoria' %}" class="btn btn-success">+</a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            Salvar Produto
+                        </button>
+                        <a href="{% url 'produtos' %}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
