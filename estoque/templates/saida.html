@@ -31,6 +31,17 @@ Saída de Estoque
                                     </option>
                                 {% endfor %}
                             </select>
+                            <label for="deposito" class="form-label fw-semibold mt-3">
+                                Depósito
+                            </label>
+                            <select id="deposito" name="deposito" class="form-select mt-2" required>
+                                <option value="">Selecione um depósito</option>
+                                {% for deposito in depositos %}
+                                    <option value="{{ deposito.id }}">
+                                        {{ deposito.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <div class="mb-3">

@@ -64,12 +64,17 @@ Produtos
                     <td>{{ produto.nome }}</td>
                     <td>{{ produto.quantidade }}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm">
+                        <a href="{% url 'editar_produto' produto.id %}" class="btn btn-warning btn-sm">
                             Editar
-                        </button>
-                        <button class="btn btn-danger btn-sm">
-                            Excluir
-                        </button>
+                        </a>
+
+                        <form method="POST" action="{% url 'excluir_produto' produto.id %}" class="d-inline"
+                        onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Excluir
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% empty %}

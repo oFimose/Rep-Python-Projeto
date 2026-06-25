@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import Produto, Categoria, Depositos, Movimentacao, Perfil
 
@@ -30,14 +31,25 @@ def dashboard(request):
 
 @login_required
 def produtos(request):
-    produtos = Produto.objects.all()
-
-    return render(request, 'produtos.html', {'produtos': produtos})
+    busca = request.GET.get("busca", "").strip()
+    categoria_id = request.GET.get("categoria", "")
+    produto_consultar = Produto.objects.all()
+    if busca:
+        produto_consultar = produto_consultar.filter(nome__icontains=busca)
+    if categoria_id:
+        produto_consultar = produto_consultar.filter(categoria_id=categoria_id)
+    categorias = Categoria.objects.all()
+    context = {
+        'produtos': produto_consultar,
+        'categorias': categorias,
+        'busca_atual': busca,
+        'categoria_atual': categoria_id,
+    }
+    return render(request, 'produtos.html', context)
 
 @login_required
 def cadastrar_produto(request):
     if request.method == "POST":
-
         categoria = Categoria.objects.get(
             id=request.POST["categoria"]
         )
@@ -53,13 +65,54 @@ def cadastrar_produto(request):
     return render(request, "cadastrar_produto.html", {"categorias": categorias})
 
 @login_required
+def editar_produto(request, produto_id):
+    try:
+        produto = Produto.objects.get(id=produto_id)
+    except Produto.DoesNotExist:
+        return redirect("produtos")
+    categorias = Categoria.objects.all()
+
+    if request.method == "POST":
+        produto.nome = request.POST.get("nome")
+        produto.descricao = request.POST.get("descricao")
+        produto.quantidade = request.POST.get("quantidade")
+        categoria_id = request.POST.get("categoria")
+        if categoria_id:
+            produto.categoria_id = categoria_id
+        else:
+            produto.categoria = None
+        produto.save()
+        return redirect("produtos")
+    return render(request, "cadastrar_produto.html", {
+        'produto': produto,
+        'categorias': categorias,
+        'modo_edicao': True
+    })
+
+@login_required
+def excluir_produto(request, produto_id):
+    try:
+        produto = Produto.objects.get(id=produto_id)
+    except Produto.DoesNotExist:
+        return redirect("produtos")
+    
+    if request.method == "POST":
+        produto.delete()
+    
+    return redirect("produtos")
+
+@login_required
 def cadastrar_categoria(request):
+    next_url = request.GET.get("next")
     if request.method == "POST":
         Categoria.objects.create(
             nome=request.POST["nome"],
-            descricao=request.POST["descricao"]
+            descricao=request.POST.get("descricao", "")
         )
-        return redirect("cadastrar_produto")
+        if next_url == "fechar":
+            return HttpResponse("<script>window.close();</script>")
+        
+        return redirect(next_url if next_url else "cadastrar_produto")
     return render(request, "cadastrar_categoria.html")
 
 @login_required
