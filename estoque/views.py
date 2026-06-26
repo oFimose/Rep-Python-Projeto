@@ -56,11 +56,10 @@ def cadastrar_produto(request):
         Produto.objects.create(
             nome=request.POST["nome"],
             descricao=request.POST["descricao"],
-            quantidade=request.POST["quantidade"],
+            estoque_minimo=request.POST["estoque_minimo"],
             categoria=categoria
         )
         return redirect("produtos")
-    
     categorias = Categoria.objects.all()
     return render(request, "cadastrar_produto.html", {"categorias": categorias})
 
@@ -75,18 +74,20 @@ def editar_produto(request, produto_id):
     if request.method == "POST":
         produto.nome = request.POST.get("nome")
         produto.descricao = request.POST.get("descricao")
-        produto.quantidade = request.POST.get("quantidade")
+        produto.estoque_minimo = request.POST.get("estoque_minimo")
         categoria_id = request.POST.get("categoria")
+
         if categoria_id:
             produto.categoria_id = categoria_id
         else:
             produto.categoria = None
+
         produto.save()
         return redirect("produtos")
     return render(request, "cadastrar_produto.html", {
-        'produto': produto,
-        'categorias': categorias,
-        'modo_edicao': True
+        "produto": produto,
+        "categorias": categorias,
+        "modo_edicao": True
     })
 
 @login_required

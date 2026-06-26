@@ -11,9 +11,10 @@ class Categoria(models.Model):
 class Produto(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField(blank=True)
-    quantidade = models.IntegerField(default=0)
+    quantidade = models.PositiveIntegerField(default=0)
+    estoque_minimo = models.PositiveIntegerField(default=0)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return self.nome
     

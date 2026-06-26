@@ -1,85 +1,82 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {% if modo_edicao %}
-        Editar Produto
-    {% else %}
-        Cadastrar Produto
-    {% endif %}
+{% if modo_edicao %}
+Editar Produto
+{% else %}
+Cadastrar Produto
+{% endif %}
 {% endblock %}
 
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow border-0">
-            <div class="card-header {% if modo_edicao %}bg-warning text-dark{% else %}bg-primary text-white{% endif %}">
-                <h4 class="mb-1">
-                    {% if modo_edicao %}
-                         Editar Produto
-                    {% else %}
-                         Cadastrar Produto
-                    {% endif %}
-                </h4>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">
+                {% if modo_edicao %}
+                    Editar Produto
+                {% else %}
+                    Cadastrar Produto
+                {% endif %}
+            </h2>
+            <small>
+                {% if modo_edicao %}
+                    Altere os dados do produto e clique em salvar.
+                {% else %}
+                    Preencha os dados do novo produto para cadastrar no estoque.
+                {% endif %}
+            </small>
+        </div>
 
-                <small>
-                    {% if modo_edicao %}
-                        Altere os dados do produto e clique em salvar.
-                    {% else %}
-                        Preencha os dados do novo produto para cadastrar no estoque.
-                    {% endif %}
-                </small>
-            </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label" for="id_nome">Nome</label>
+                    <input type="text" name="nome" id="id_nome" class="form-control" value="{{ produto.nome|default:'' }}" required>
+                </div>
 
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label" for="id_estoque_minimo">Estoque Mínimo</label>
+                    <input type="number" name="estoque_minimo" id="id_estoque_minimo" class="form-control" value="{{ produto.estoque_minimo|default:'' }}" min="0" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="id_nome">Nome</label>
-                        <input type="text" name="nome" id="id_nome" class="form-control" value="{{ produto.nome|default:'' }}" required>
+                <div class="mb-3">
+                    <label class="form-label" for="id_descricao">Descrição</label>
+                    <textarea name="descricao" id="id_descricao"rows="4" class="form-control">{{ produto.descricao|default:'' }}</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" for="id_categoria">Categoria</label>
+                    <div class="input-group">
+                        <select name="categoria" id="id_categoria" class="form-select" required>
+                            <option value="">Selecione uma categoria</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}"
+                                    {% if produto.categoria and produto.categoria.id == categoria.id %}selected{% endif %}>
+                                    {{ categoria.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <a href="{% url 'cadastrar_categoria' %}?next=fechar" target="_blank" class="btn btn-success">+</a>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="id_quantidade">Quantidade</label>
-                        <input type="number" name="quantidade" id="id_quantidade" class="form-control" value="{{ produto.quantidade|default:'' }}" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="id_descricao">Descrição</label>
-                        <textarea name="descricao" id="id_descricao" rows="4" class="form-control">{{ produto.descricao|default:'' }}</textarea>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label" for="id_categoria">Categoria</label>
-                        <div class="input-group">
-                            <select name="categoria" id="id_categoria" class="form-select" required>
-                                <option value="">Selecione uma categoria</option>
-                                {% for categoria in categorias %}
-                                    <option value="{{ categoria.id }}"
-                                        {% if produto.categoria and produto.categoria.id == categoria.id %}selected{% endif %}>
-                                        {{ categoria.nome }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <a href="{% url 'cadastrar_categoria' %}?next=fechar" target="_blank" class="btn btn-success">+</a>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn {% if modo_edicao %}btn-warning{% else %}btn-primary{% endif %} flex-fill">
-                            {% if modo_edicao %}
-                                Salvar Alterações
-                            {% else %}
-                                Salvar Produto
-                            {% endif %}
-                        </button>
-                        <a href="{% url 'produtos' %}" class="btn btn-secondary">
-                            Cancelar
-                        </a>
-                    </div>
-                </form>
-            </div>
+                <div class="d-flex gap-2">
+                    <button type="submit"
+                            class="btn {% if modo_edicao %}btn-warning{% else %}btn-primary{% endif %} flex-fill">
+                        {% if modo_edicao %}
+                            Salvar Alterações
+                        {% else %}
+                            Salvar Produto
+                        {% endif %}
+                    </button>
+                    <a href="{% url 'produtos' %}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
