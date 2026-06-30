@@ -23,5 +23,9 @@ urlpatterns = [
         name="cadastrar_deposito"
     ),
     path("entrada/", views.entrada, name="entrada"),
-    path("saida/", views.saida, name="saida")
+    path("saida/", views.saida, name="saida"),
+    path("relatorios/", 
+         views.relatorio_produtos,
+         name="relatorio_produtos"
+),
 ]

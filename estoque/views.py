@@ -31,7 +31,7 @@ def dashboard(request):
 
 @login_required
 def produtos(request):
-    busca = request.GET.get("busca", "").strip()
+    busca = request.GET.get("nome", "").strip()
     categoria_id = request.GET.get("categoria", "")
     produto_consultar = Produto.objects.all()
     if busca:
@@ -128,7 +128,7 @@ def cadastrar_deposito(request):
         Depositos.objects.create(
             nome=request.POST["nome"],
             localizacao=request.POST["localizacao"],
-            responsavel=request.POST["responsavel"]
+            responsavel=request.POST.get("responsavel", "")
         )
         return redirect("depositos")
     return render(request, "cadastrar_deposito.html")
@@ -205,3 +205,38 @@ def saida(request):
         "produtos": produtos,
         "depositos": depositos  
     })
+
+@login_required
+def relatorio_produtos(request):
+    produtos = Produto.objects.all()
+    produto = None
+    movimentacoes = []
+
+    entradas = 0
+    saidas = 0
+    saldo = 0
+
+    if request.GET.get("produto"):
+        produto = Produto.objects.get(id=request.GET.get("produto"))
+
+        movimentacoes = Movimentacao.objects.filter(
+            produto=produto
+        ).order_by("-data")
+
+        for mov in movimentacoes:
+            if mov.tipo == "E":
+                entradas += mov.quantidade
+            elif mov.tipo == "S":
+                saidas += mov.quantidade
+
+        saldo = produto.quantidade
+
+    return render(request, "relatorio_produtos.html", {
+        "produtos": produtos,
+        "produto": produto,
+        "movimentacoes": movimentacoes,
+        "entradas": entradas,
+        "saidas": saidas,
+        "saldo": saldo
+    })
+    

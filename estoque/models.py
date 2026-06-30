@@ -21,7 +21,7 @@ class Produto(models.Model):
 class Depositos(models.Model):
     nome = models.CharField(max_length=100)
     localizacao = models.CharField(max_length=100)
-    responsavel = models.CharField(max_length=100)
+    responsavel = models.CharField(max_length=100, default="")
 
     def __str__(self):
         return self.nome
