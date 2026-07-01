@@ -16,12 +16,22 @@ urlpatterns = [
         views.cadastrar_categoria,
         name="cadastrar_categoria"
     ),
+
     path("depositos/", views.depositos, name="depositos"),
     path(
         "depositos/cadastrar/",
         views.cadastrar_deposito,
         name="cadastrar_deposito"
     ),
+
+    path('depositos/editar/<int:deposito_id>/',
+         views.editar_deposito,
+         name="editar_deposito"),
+
+    path('depositos/excluir/<int:deposito_id>/',
+         views.excluir_deposito,
+         name="excluir_deposito"),
+
     path("entrada/", views.entrada, name="entrada"),
     path("saida/", views.saida, name="saida"),
     path("relatorios/", 

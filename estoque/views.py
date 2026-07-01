@@ -119,7 +119,6 @@ def cadastrar_categoria(request):
 @login_required
 def depositos(request):
     depositos = Depositos.objects.all()
-
     return render(request, 'depositos.html', {'depositos': depositos})
 
 @login_required
@@ -128,10 +127,39 @@ def cadastrar_deposito(request):
         Depositos.objects.create(
             nome=request.POST["nome"],
             localizacao=request.POST["localizacao"],
-            responsavel=request.POST.get("responsavel", "")
         )
         return redirect("depositos")
     return render(request, "cadastrar_deposito.html")
+
+@login_required
+def editar_deposito(request, deposito_id):
+    try:
+        deposito = Depositos.objects.get(id=deposito_id)
+    except Depositos.DoesNotExist:
+        return redirect("depositos")
+    
+    if request.method == "POST":
+        deposito.nome = request.POST.get("nome")
+        deposito.localizacao = request.POST.get("localizacao")
+        deposito.save()
+        return redirect("depositos")
+    
+    return render(request, "cadastrar_deposito.html", {
+        "deposito": deposito,
+        "modo_edicao": True
+    })
+
+@login_required
+def excluir_deposito(request, deposito_id):
+    try:
+        deposito = Depositos.objects.get(id=deposito_id)
+    except Depositos.DoesNotExist:
+        return redirect("depositos")
+    
+    if request.method == "POST":
+        deposito.delete()
+    
+    return redirect("depositos")
 
 @login_required
 def entrada(request):
@@ -216,27 +244,39 @@ def relatorio_produtos(request):
     saidas = 0
     saldo = 0
 
+    grupos = {}
+
     if request.GET.get("produto"):
         produto = Produto.objects.get(id=request.GET.get("produto"))
 
         movimentacoes = Movimentacao.objects.filter(
             produto=produto
-        ).order_by("-data")
+        ).order_by("deposito__nome", "-data")
 
         for mov in movimentacoes:
+
             if mov.tipo == "E":
                 entradas += mov.quantidade
-            elif mov.tipo == "S":
+            else:
                 saidas += mov.quantidade
+
+            nome_deposito = "Sem depósito"
+
+            if mov.deposito:
+                nome_deposito = mov.deposito.nome
+
+            if nome_deposito not in grupos:
+                grupos[nome_deposito] = []
+
+            grupos[nome_deposito].append(mov)
 
         saldo = produto.quantidade
 
     return render(request, "relatorio_produtos.html", {
         "produtos": produtos,
         "produto": produto,
-        "movimentacoes": movimentacoes,
+        "grupos": grupos,
         "entradas": entradas,
         "saidas": saidas,
         "saldo": saldo
     })
-    

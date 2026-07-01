@@ -6,70 +6,58 @@ Depósitos
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="fw-bold">
-        Depósitos
-    </h1>
-    <a href="{% url 'cadastrar_deposito' %}" class="btn btn-primary">
-        + Novo Depósito
-    </a>
-</div>
-
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
-        <form method="GET">
-            <div class="row g-3">
-                <div class="col-md-9">
-                    <input type="text" name="nome" class="form-control" placeholder="Buscar depósito">
-                </div>
-
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100">
-                        Filtrar
-                    </button>
-                </div>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Depósitos</h2>
+            <small class="text-muted">
+                Gerencie os depósitos cadastrados.
+            </small>
+        </div>
+        <a href="{% url 'cadastrar_deposito' %}" class="btn btn-primary">
+            Novo Depósito
+        </a>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th >Nome</th>
+                            <th>Localização</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for deposito in depositos %}
+                        <tr>
+                            <td>{{ deposito.nome }}</td>
+                            <td>{{ deposito.localizacao }}</td>
+                            <td>
+                                <a href="{% url 'editar_deposito' deposito.id %}" class="btn btn-warning btn-sm">
+                                    Editar
+                                </a>
+                            <form method="POST" action="{% url 'excluir_deposito' deposito.id %}" class="d-inline"
+                                onsubmit="return confirm('Tem certeza que deseja excluir este depósito?');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    Excluir
+                                </button>
+                                {% csrf_token %}
+                            </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">
+                                Nenhum depósito cadastrado.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <table class="table table-hover align-middle">
-            <thead class="table-primary">
-                <tr>
-                    <th>Nome</th>
-                    <th>Localização</th>
-                    <th>Responsável</th>
-                    <th width="180">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for deposito in depositos %}
-
-                <tr>
-                    <td>{{ deposito.nome }}</td>
-                    <td>{{ deposito.localizacao }}</td>
-                    <td>{{ deposito.responsavel }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm">
-                            Editar
-                        </button>
-                        <button class="btn btn-danger btn-sm">
-                            Excluir
-                        </button>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted">
-                        Nenhum depósito cadastrado.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
 {% endblock %}
