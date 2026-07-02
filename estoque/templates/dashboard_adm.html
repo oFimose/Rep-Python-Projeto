@@ -7,10 +7,10 @@ Dashboard
 {% block content %}
 
 <h1 class="fw-bold">
-    Bem-vindo ao Dashboard!
+    Bem-vindo ao Dashboard, {{ request.user.first_name|default:request.user.username }}!
 </h1>
 <p class="text-muted">
-    Aqui você pode gerenciar o estoque, visualizar relatórios e muito mais.
+    Tenha um ótimo trabalho!
 </p>
 
 <div class="row mb-4">

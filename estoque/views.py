@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Produto, Categoria, Depositos, Movimentacao, Perfil
+from .models import Produto, Categoria, Depositos, Movimentacao, Perfil, User
 
 # Create your views here.
+def admin_verificar(request):
+    return hasattr(request.user, "perfil") and request.user.perfil.tipo == "ADMIN"
+
 @login_required
 def redirecionar(request):
     try: 
@@ -49,6 +52,8 @@ def produtos(request):
 
 @login_required
 def cadastrar_produto(request):
+    if not admin_verificar(request):
+        return redirect("produtos")
     if request.method == "POST":
         categoria = Categoria.objects.get(
             id=request.POST["categoria"]
@@ -65,6 +70,8 @@ def cadastrar_produto(request):
 
 @login_required
 def editar_produto(request, produto_id):
+    if not admin_verificar(request):
+        return redirect("produtos")
     try:
         produto = Produto.objects.get(id=produto_id)
     except Produto.DoesNotExist:
@@ -92,6 +99,8 @@ def editar_produto(request, produto_id):
 
 @login_required
 def excluir_produto(request, produto_id):
+    if not admin_verificar(request):
+        return redirect("produtos")
     try:
         produto = Produto.objects.get(id=produto_id)
     except Produto.DoesNotExist:
@@ -123,6 +132,8 @@ def depositos(request):
 
 @login_required
 def cadastrar_deposito(request):
+    if not admin_verificar(request):
+        return redirect("depositos")
     if request.method == "POST":
         Depositos.objects.create(
             nome=request.POST["nome"],
@@ -133,6 +144,8 @@ def cadastrar_deposito(request):
 
 @login_required
 def editar_deposito(request, deposito_id):
+    if not admin_verificar(request):
+        return redirect("depositos")
     try:
         deposito = Depositos.objects.get(id=deposito_id)
     except Depositos.DoesNotExist:
@@ -151,6 +164,8 @@ def editar_deposito(request, deposito_id):
 
 @login_required
 def excluir_deposito(request, deposito_id):
+    if not admin_verificar(request):
+        return redirect("depositos")
     try:
         deposito = Depositos.objects.get(id=deposito_id)
     except Depositos.DoesNotExist:
@@ -280,3 +295,67 @@ def relatorio_produtos(request):
         "saidas": saidas,
         "saldo": saldo
     })
+
+@login_required
+def funcionarios(request):
+    if not admin_verificar(request):
+        return redirect("dashboard")
+    busca = request.GET.get("nome", "").strip()
+    funcionarios = User.objects.filter(perfil__tipo="FUNC")
+    if busca:
+        funcionarios = funcionarios.filter(first_name__icontains=busca)
+        
+    return render(request, "funcionarios.html", {
+        "funcionarios": funcionarios
+    })
+
+@login_required
+def cadastrar_funcionario(request):
+    if not admin_verificar(request):
+        return redirect("dashboard")
+    if request.method == "POST":
+        usuario = User.objects.create_user(
+            username=request.POST["username"],
+            password=request.POST["senha"],
+            first_name=request.POST["nome"]
+        )
+        Perfil.objects.create(
+            usuario=usuario,
+            tipo="FUNC"
+        )
+        return redirect("funcionarios")
+    return render(request, "cadastrar_funcionario.html")
+
+@login_required
+def editar_funcionario(request, funcionario_id):
+    if not admin_verificar(request):
+        return redirect("dashboard")
+    try:
+        funcionario = User.objects.get(id=funcionario_id)
+    except User.DoesNotExist:
+        return redirect("funcionarios")
+    if request.method == "POST":
+        funcionario.first_name = request.POST["nome"]
+        funcionario.username = request.POST["username"]
+        if request.POST.get("senha"):
+            funcionario.set_password(request.POST["senha"])
+        funcionario.save()
+
+        return redirect("funcionarios")
+    return render(request, "cadastrar_funcionario.html", {
+        "funcionario": funcionario,
+        "modo_edicao": True
+    })
+
+@login_required
+def excluir_funcionario(request, funcionario_id):
+    if not admin_verificar(request):
+        return redirect("dashboard")
+    try:
+        funcionario = User.objects.get(id=funcionario_id)
+    except User.DoesNotExist:
+        return redirect("funcionarios")
+    if request.method == "POST":
+        funcionario.delete()
+
+    return redirect("funcionarios")

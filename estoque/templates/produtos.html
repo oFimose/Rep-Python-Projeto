@@ -8,9 +8,11 @@ Produtos
     <h1 class="fw-bold">
         Produtos
     </h1>
+    {% if request.user.perfil.tipo == "ADMIN" %}
     <a href="{% url 'cadastrar_produto' %}" class="btn btn-primary">
         + Novo Produto
     </a>
+    {% endif %}
 </div>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
@@ -48,7 +50,9 @@ Produtos
                 <tr>
                     <th>Nome</th>
                     <th>Quantidade</th>
+                    {% if request.user.perfil.tipo == "ADMIN" %}
                     <th width="180">Ações</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +60,7 @@ Produtos
                 <tr>
                     <td>{{ produto.nome }}</td>
                     <td>{{ produto.quantidade }}</td>
+                    {% if request.user.perfil.tipo == "ADMIN" %}
                     <td>
                         <a href="{% url 'editar_produto' produto.id %}" class="btn btn-warning btn-sm">
                             Editar
@@ -68,10 +73,11 @@ Produtos
                             </button>
                         </form>
                     </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" class="text-center text-muted">
+                    <td colspan="{% if request.user.perfil.tipo == 'ADMIN' %}3{% else %}2{% endif %}" class="text-center text-muted">
                         Nenhum produto cadastrado.
                     </td>
                 </tr>

@@ -59,7 +59,9 @@ Cadastrar Produto
                                 </option>
                             {% endfor %}
                         </select>
+                        {% if request.user.perfil.tipo == "ADMIN" %}
                         <a href="{% url 'cadastrar_categoria' %}?next=fechar" target="_blank" class="btn btn-success">+</a>
+                        {% endif %}
                     </div>
                 </div>
 
