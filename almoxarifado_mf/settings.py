@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,3 +123,14 @@ STATIC_URL = 'static/'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'redirecionar_perfil'
 LOGOUT_REDIRECT_URL = 'login'
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key')
+ALLOWED_HOSTS = ['.onrender.com', '*']
+
+'whitenoise.middleware.WhiteNoiseMiddleware'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)

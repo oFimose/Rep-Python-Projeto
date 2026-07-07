@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
 Dashboard
 {% endblock %}
-
+<style>
+.dashboard-bg{
+    min-height: 100vh;
+    background-image: url("{% static 'img/dashboard.png' %}");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 500px; 
+}
+</style>
 {% block content %}
 
 <h1 class="fw-bold">

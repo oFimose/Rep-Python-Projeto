@@ -2,7 +2,14 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from dotenv import load_dotenv
 
+SECRET_KEY = 'django-insecure-j)b=l+nf#(*g)#4tz3zb%w3mfkc1wiuba6d3!j7i--!fs0oy5c'
+DEBUG = True
+
+load_dotenv()  
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
 
 def main():
     """Run administrative tasks."""
