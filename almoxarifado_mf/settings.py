@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -129,8 +130,6 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key')
 ALLOWED_HOSTS = ['.onrender.com', '*']
 
-'whitenoise.middleware.WhiteNoiseMiddleware'
-
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+if os.environ.get("DATABASE_URL"):DATABASES['default'] = dj_database_url.config(conn_max_age=600)
