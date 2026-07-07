@@ -40,4 +40,4 @@ Rep-Python-Projeto/
 
 ## 👨‍💻 Desenvolvido por
 
-- Pedro Henrique Vieira
+- Pedro Henrique Vieira e Marlon Lima
