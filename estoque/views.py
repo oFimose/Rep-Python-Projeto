@@ -5,20 +5,14 @@ from .models import Produto, Categoria, Depositos, Movimentacao, Perfil, User
 
 # Create your views here.
 def admin_verificar(request):
-    return hasattr(request.user, "perfil") and request.user.perfil.tipo == "ADMIN"
+    return request.user.is_superuser
 
 @login_required
 def redirecionar(request):
-    print("passou aqui bosta")
-    try: 
-        perfil = request.user.perfil
-        print("perfil:", perfil.tipo)
-        if perfil.tipo == "ADMIN":
-            return redirect('dashboard')
-        else:
-            return redirect('produtos')
-    except Perfil.DoesNotExist:
-        return redirect("produtos")
+    if request.user.is_superuser:
+        return redirect('dashboard')
+    
+    return redirect("produtos")
 
 @login_required
 def dashboard(request):

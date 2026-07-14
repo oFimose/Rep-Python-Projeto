@@ -8,7 +8,7 @@ Produtos
     <h1 class="fw-bold">
         Produtos
     </h1>
-    {% if request.user.perfil.tipo == "ADMIN" %}
+    {% if request.user.is_superuser %}
     <a href="{% url 'cadastrar_produto' %}" class="btn btn-primary">
         + Novo Produto
     </a>
@@ -50,7 +50,7 @@ Produtos
                 <tr>
                     <th>Nome</th>
                     <th>Quantidade</th>
-                    {% if request.user.perfil.tipo == "ADMIN" %}
+                    {% if request.user.is_superuser %}
                     <th width="180">Ações</th>
                     {% endif %}
                 </tr>
@@ -60,7 +60,7 @@ Produtos
                 <tr>
                     <td>{{ produto.nome }}</td>
                     <td>{{ produto.quantidade }}</td>
-                    {% if request.user.perfil.tipo == "ADMIN" %}
+                    {% if request.user.is_superuser %}
                     <td>
                         <a href="{% url 'editar_produto' produto.id %}" class="btn btn-warning btn-sm">
                             Editar
@@ -77,7 +77,7 @@ Produtos
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="{% if request.user.perfil.tipo == 'ADMIN' %}3{% else %}2{% endif %}" class="text-center text-muted">
+                    <td colspan="{% if request.user.is_superuser %}3{% else %}2{% endif %}" class="text-center text-muted">
                         Nenhum produto cadastrado.
                     </td>
                 </tr>
