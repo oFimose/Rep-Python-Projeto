@@ -45,7 +45,6 @@ class Perfil(models.Model):
     TIPOS = (
         ('ADMIN', 'Administrador'),
         ('FUNC', 'Funcionário'),
-        ('PROF', 'Professor'),
     )
 
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)

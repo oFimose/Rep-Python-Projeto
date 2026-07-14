@@ -9,14 +9,16 @@ def admin_verificar(request):
 
 @login_required
 def redirecionar(request):
+    print("passou aqui bosta")
     try: 
         perfil = request.user.perfil
+        print("perfil:", perfil.tipo)
         if perfil.tipo == "ADMIN":
             return redirect('dashboard')
         else:
             return redirect('produtos')
     except Perfil.DoesNotExist:
-        return redirect("login")
+        return redirect("produtos")
 
 @login_required
 def dashboard(request):
